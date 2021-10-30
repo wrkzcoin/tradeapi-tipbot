@@ -177,6 +177,30 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
+  '/cancel':
+    post:
+      summary: Cancel order with referenced number
+      tags:
+      - Private Query
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/components/requestBodies/buyBody'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/components/schemas/Cancel'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
 components:
   requestBodies:
     buyBody:
@@ -403,7 +427,6 @@ components:
           example: true
         result:
           type: array
-          description: coin name
           items:
             properties:
               message:
@@ -412,3 +435,13 @@ components:
                 example: >-
                   New open order created: #**1002222** Selling: 1,000 GNTL For: 0.0057XMR Fee: 1.000 GNTL
 
+    Cancel:
+      properties:
+        success:
+          type: string
+          description: true or false
+          example: true
+        message:
+          type: string
+          example: >-
+            You cancelled 1002222.
