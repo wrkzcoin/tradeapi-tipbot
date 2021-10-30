@@ -17,6 +17,7 @@ info:
     # Support
 
     If you are having issues, please stop by our [discord](https://chat.wrkz.work) and visit the `#development` channel for assistance.
+
   version: 1.0.0
   title: tradeapi-tipbot
 tags:
@@ -31,10 +32,8 @@ paths:
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Markets'
+          schema:
+            $ref: '#/components/schemas/Markets'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -45,20 +44,17 @@ paths:
       summary: Retrieves information regarding trading information of a coin
       parameters:
         - name: coin
+          type: string
           description: Supported and tradable coin name by TipBot
           in: path
           required: true
-          schema:
-            type: string
       tags:
         - Public
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Info.Coin'
+          schema:
+            $ref: '#/components/schemas/Info.Coin'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -69,26 +65,22 @@ paths:
       summary: Retrieves list of buy and sell orders
       parameters:
         - name: coin1
+          type: string
           description: Supported and tradable coin name by TipBot
           in: path
           required: true
-          schema:
-            type: string
         - name: coin2
+          type: string
           description: Supported and tradable coin name by TipBot
           in: path
           required: true
-          schema:
-            type: string
       tags:
         - Public
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Info.Coin'
+          schema:
+            $ref: '#/components/schemas/Info.Coin'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -96,24 +88,21 @@ paths:
 
 
   '/get_balance/{coin}':
-    get:
-      summary: Get the balance for every coin
+    post:
+      summary: Get the balance for a coin
       parameters:
         - name: coin
+          type: string
           description: Supported and tradable coin name by TipBot
           in: path
           required: true
-          schema:
-            type: string
       tags:
         - Private Query
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Balances'
+          schema:
+            $ref: '#/components/schemas/BalanceCoin'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -126,20 +115,17 @@ paths:
       summary: Get a deposit address of a coin
       parameters:
         - name: coin
+          type: string
           description: Supported and tradable coin name by TipBot
           in: path
           required: true
-          schema:
-            type: string
       tags:
         - Private Query
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Deposit.Coin'
+          schema:
+            $ref: '#/components/schemas/DepositCoin'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -148,51 +134,17 @@ paths:
           $ref: '#/components/responses/InternalError'
 
 
-  '/get_balance/{coin}':
-    get:
-      summary: Get balance of a coin
-      parameters:
-        - name: coin
-          description: Supported and tradable coin name by TipBot
-          in: path
-          required: true
-          schema:
-            type: string
-      tags:
-        - Private Query
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Balance.Coin'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalError'
-
-  /buy:
+  '/buy':
     post:
       summary: Buy an opened order with referenced number
       tags:
         - Private Query
       requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - ref_number
-                properties:
-                  ref_number:
-                    type: string
-                    description: Referenced number
-                    example: >-
-                      1002222
+        required: true
+        content:
+          application/json:
+        schema: '#/components/requestBodies/BuyBody'
+
       responses:
         '200':
           description: The operation completed successfully.
@@ -211,7 +163,7 @@ paths:
                         type: string
                         example: >-
                           1002222
-                       message:
+                      message:
                         type: string
                         example: >-
                           Order completed!
@@ -223,6 +175,19 @@ paths:
           $ref: '#/components/responses/InternalError'
 
 components:
+  requestBodies:
+    buyBody:
+      description: Buy ref number
+      required: true
+      content:
+        application/json:
+      schema:
+        type: object
+        properties:
+          ref_number:
+            type: string
+            example: 100XXXX
+        
   responses:
     NotFound:
       description: The specified resource was not found
@@ -287,7 +252,8 @@ components:
         markets:
           type: object
           description: Lists of opened markets
-    Balance.Coin:
+
+    BalanceCoin:
       properties:
         success:
           type: string
@@ -301,13 +267,14 @@ components:
               balance:
                 type: string
                 description: Balance in string format
-                example: 10,000.00
+                example: >-
+                  10,000.00
               maintenance:
                 type: string
                 description: true or false
                 example: true
 
-    Deposit.Coin:
+    DepositCoin:
       properties:
         success:
           type: string
