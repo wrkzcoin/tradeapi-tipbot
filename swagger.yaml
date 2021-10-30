@@ -88,7 +88,7 @@ paths:
 
 
   '/get_balance/{coin}':
-    post:
+    get:
       summary: Get the balance for a coin
       parameters:
         - name: coin
@@ -138,35 +138,20 @@ paths:
     post:
       summary: Buy an opened order with referenced number
       tags:
-        - Private Query
+      - Private Query
       requestBody:
+        description: parameters
         required: true
         content:
           application/json:
-        schema: '#/components/requestBodies/BuyBody'
+            schema:
+              $ref: '#/components/requestBodies/buyBody'
 
       responses:
         '200':
-          description: The operation completed successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: string
-                    example: true
-                  result:
-                    type: object
-                    property:
-                      ref_number:
-                        type: string
-                        example: >-
-                          1002222
-                      message:
-                        type: string
-                        example: >-
-                          Order completed!
+          description: OK
+          schema:
+            $ref: '#/components/schemas/Buy'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -174,19 +159,22 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
+
 components:
+
   requestBodies:
     buyBody:
       description: Buy ref number
       required: true
       content:
         application/json:
-      schema:
-        type: object
-        properties:
-          ref_number:
-            type: string
-            example: 100XXXX
+        schema:
+          type: object
+          properties:
+            ref_number:
+              type: string
+              required: true
+              example: 100XXXX
         
   responses:
     NotFound:
@@ -275,6 +263,27 @@ components:
                 example: true
 
     DepositCoin:
+      properties:
+        success:
+          type: string
+          description: true or false
+          example: true
+        coin:
+          type: array
+          description: coin name
+          items:
+            properties:
+              deposit_address:
+                type: string
+                description: Deposit address
+                example: >-
+                  WrkzReo4ys8HFtoJkWvcEb9bSwQnXUDswAZqXR4A5cBa9PtYm4VS7Uz9w1WkuDquK1J6YXPGb3hrkHw15goxkeBHHxdBTLWnyRQb3X63R46gBBeuxBrgbRZ2qZLRf5TwnheZ1rpta1FAbR7XvMK6bL8Jkk293fJBL2ywDcHCXur4Z8VY59NBQcvwhB
+              maintenance:
+                type: string
+                description: true or false
+                example: true
+
+    Buy:
       properties:
         success:
           type: string
